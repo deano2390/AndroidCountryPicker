@@ -31,18 +31,24 @@ public class CountryListAdapter extends BaseAdapter {
 	 * @param drawableName
 	 * @return
 	 */
-	private int getResId(String drawableName) {
+	public static int getResId(String countryCode) {
 
-		try {
-			Class<drawable> res = R.drawable.class;
-			Field field = res.getField(drawableName);
-			int drawableId = field.getInt(null);
-			return drawableId;
-		} catch (Exception e) {
-			Log.e("COUNTRYPICKER", "Failure to get drawable id.", e);
-		}
+        if(countryCode!=null) {
+            String drawableName = "flag_"
+                    + countryCode.toLowerCase(Locale.ENGLISH);
+
+            try {
+                Class<drawable> res = R.drawable.class;
+                Field field = res.getField(drawableName);
+                int drawableId = field.getInt(null);
+                return drawableId;
+            } catch (Exception e) {
+                Log.e("COUNTRYPICKER", "Failure to get drawable id.", e);
+            }
+        }
 		return -1;
 	}
+
 
 	/**
 	 * Constructor
@@ -97,10 +103,7 @@ public class CountryListAdapter extends BaseAdapter {
 
 		cell.textView.setText(country.getName());
 
-		// Load drawable dynamically from country code
-		String drawableName = "flag_"
-				+ country.getCode().toLowerCase(Locale.ENGLISH);
-		cell.imageView.setImageResource(getResId(drawableName));
+		cell.imageView.setImageResource(getResId(country.getCode()));
 		return cellView;
 	}
 
