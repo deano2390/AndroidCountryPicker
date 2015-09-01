@@ -1,6 +1,39 @@
 AndroidCountryPicker
 ====================
 
+Updated to use the Gradle build system and hosted on JitPack for ease of inclusion in Gradle enabled projects:
+
+https://jitpack.io/#deano2390/AndroidCountryPicker
+
+# Gradle
+--------
+/build.gradle
+```groovy
+allprojects {
+	repositories {
+		jcenter()
+		maven { url "https://jitpack.io" }
+	}
+}
+```
+
+Then add the dependency to your module's build.gradle:
+
+/app/build.gradle
+```groovy
+compile 'com.github.deano2390:AndroidCountryPicker:1.0.1'
+```
+
+NOTE: Some people have mentioned that they needed to add the @aar suffix to get it to resolve from JitPack:
+```groovy
+compile 'com.github.deano2390:AndroidCountryPicker:1.0.1@aar'
+```
+
+
+
+Original ReadMe
+====================
+
 ## Features
 CountryPicker is a simple fragment that can be embedded or shown as dialog. See the example to see more detail.
 
