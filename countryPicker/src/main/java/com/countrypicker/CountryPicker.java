@@ -110,53 +110,58 @@ public class CountryPicker extends DialogFragment {
 
         //if (allCountriesList == null) {
 
-            try {
-                allCountriesList = new ArrayList<Country>();
+        try {
+            allCountriesList = new ArrayList<Country>();
 
-                // Read from local file
-                String allCountriesString = readFileFromRawAsString(res);
-                JSONObject jsonObject = new JSONObject(allCountriesString);
-                Iterator<?> keys = jsonObject.keys();
+            // Read from local file
+            String allCountriesString = readFileFromRawAsString(res);
+            JSONObject jsonObject = new JSONObject(allCountriesString);
+            Iterator<?> keys = jsonObject.keys();
 
-                // Add the data to all countries list
-                while (keys.hasNext()) {
-                    String key = (String) keys.next();
-                    Country country = new Country();
-                    country.setCode(key);
-                    country.setName(jsonObject.getString(key));
-                    allCountriesList.add(country);
-                }
-
-                // Sort the all countries list based on country name
-                Collections.sort(allCountriesList, new Comparator<Country>() {
-                    @Override
-                    public int compare(Country lhs, Country rhs) {
-                        return lhs.getName().compareTo(rhs.getName());
-                    }
-                });
-
-
-                int indexOfUK = 0;
-
-                for (int i = 0; i < allCountriesList.size(); i++) {
-                Country country = allCountriesList.get(i);
-                    if(country.getCode().equals("GB")){
-                        indexOfUK = i;
-                        break;
-                    }
-                }
-
-                Collections.swap(allCountriesList, 0, indexOfUK);
-
-                // Initialize selected countries with all countries
-                selectedCountriesList = new ArrayList<Country>();
-                selectedCountriesList.addAll(allCountriesList);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            // Add the data to all countries list
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                Country country = new Country();
+                country.setCode(key);
+                country.setName(jsonObject.getString(key));
+                allCountriesList.add(country);
             }
-       // }
+
+
+            // Sort the all countries list based on country name
+            Collections.sort(allCountriesList, new Comparator<Country>() {
+                @Override
+                public int compare(Country lhs, Country rhs) {
+                    return lhs.getName().compareTo(rhs.getName());
+                }
+            });
+
+
+            Country dummyCountry = new Country();
+            dummyCountry.setName("None");
+            allCountriesList.add(0, dummyCountry);
+
+            int indexOfUK = 0;
+
+            for (int i = 0; i < allCountriesList.size(); i++) {
+                Country country = allCountriesList.get(i);
+                if (country.getCode() != null && country.getCode().equals("GB")) {
+                    indexOfUK = i;
+                    break;
+                }
+            }
+
+            Collections.swap(allCountriesList, 1, indexOfUK);
+
+            // Initialize selected countries with all countries
+            selectedCountriesList = new ArrayList<Country>();
+            selectedCountriesList.addAll(allCountriesList);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // }
         return allCountriesList;
     }
 

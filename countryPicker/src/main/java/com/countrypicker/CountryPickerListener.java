@@ -5,5 +5,5 @@ package com.countrypicker;
  *
  */
 public interface CountryPickerListener {
-	public void onSelectCountry(String name, String code);
+	void onSelectCountry(String name, String code);
 }

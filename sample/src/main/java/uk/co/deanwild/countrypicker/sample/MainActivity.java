@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.countrypicker.CountryPicker;
+import com.countrypicker.CountryPickerListener;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -20,7 +21,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        CountryPicker picker = CountryPicker.newInstance("Select Country");
+        final CountryPicker picker = CountryPicker.newInstance("Select Country");
+
+        picker.setListener(new CountryPickerListener() {
+            @Override
+            public void onSelectCountry(String name, String code) {
+                picker.dismissAllowingStateLoss();
+            }
+        });
+
         picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
     }
 }

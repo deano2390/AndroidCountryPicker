@@ -17,23 +17,23 @@ import com.countrypicker.R.drawable;
 
 public class CountryListAdapter extends BaseAdapter {
 
-	private Context context;
-	List<Country> countries;
-	LayoutInflater inflater;
+    private Context context;
+    List<Country> countries;
+    LayoutInflater inflater;
 
-	/**
-	 * The drawable image name has the format "flag_$countryCode". We need to
-	 * load the drawable dynamically from country code. Code from
-	 * http://stackoverflow.com/
-	 * questions/3042961/how-can-i-get-the-resource-id-of
-	 * -an-image-if-i-know-its-name
-	 * 
-	 * @param drawableName
-	 * @return
-	 */
-	public static int getResId(String countryCode) {
+    /**
+     * The drawable image name has the format "flag_$countryCode". We need to
+     * load the drawable dynamically from country code. Code from
+     * http://stackoverflow.com/
+     * questions/3042961/how-can-i-get-the-resource-id-of
+     * -an-image-if-i-know-its-name
+     *
+     * @param drawableName
+     * @return
+     */
+    public static int getResId(String countryCode) {
 
-        if(countryCode!=null) {
+        if (countryCode != null) {
             String drawableName = "flag_"
                     + countryCode.toLowerCase(Locale.ENGLISH);
 
@@ -46,74 +46,74 @@ public class CountryListAdapter extends BaseAdapter {
                 Log.e("COUNTRYPICKER", "Failure to get drawable id.", e);
             }
         }
-		return -1;
-	}
+        return android.R.drawable.ic_menu_help;
+
+    }
 
 
-	/**
-	 * Constructor
-	 * 
-	 * @param context
-	 * @param countries
-	 */
-	public CountryListAdapter(Context context, List<Country> countries) {
-		super();
-		this.context = context;
-		this.countries = countries;
-		inflater = (LayoutInflater) this.context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+    /**
+     * Constructor
+     *
+     * @param context
+     * @param countries
+     */
+    public CountryListAdapter(Context context, List<Country> countries) {
+        super();
+        this.context = context;
+        this.countries = countries;
+        inflater = (LayoutInflater) this.context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return countries.size();
-	}
+    @Override
+    public int getCount() {
+        // TODO Auto-generated method stub
+        return countries.size();
+    }
 
-	@Override
-	public Object getItem(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Object getItem(int arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public long getItemId(int arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public long getItemId(int arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	/**
-	 * Return row for each country
-	 */
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View cellView = convertView;
-		Cell cell;
-		Country country = countries.get(position);
+    /**
+     * Return row for each country
+     */
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View cellView = convertView;
+        Cell cell;
+        Country country = countries.get(position);
 
-		if (convertView == null) {
-			cell = new Cell();
-			cellView = inflater.inflate(R.layout.row, null);
-			cell.textView = (TextView) cellView.findViewById(R.id.row_title);
-			cell.imageView = (ImageView) cellView.findViewById(R.id.row_icon);
-			cellView.setTag(cell);
-		} else {
-			cell = (Cell) cellView.getTag();
-		}
+        if (convertView == null) {
+            cell = new Cell();
+            cellView = inflater.inflate(R.layout.row, null);
+            cell.textView = (TextView) cellView.findViewById(R.id.row_title);
+            cell.imageView = (ImageView) cellView.findViewById(R.id.row_icon);
+            cellView.setTag(cell);
+        } else {
+            cell = (Cell) cellView.getTag();
+        }
 
-		cell.textView.setText(country.getName());
+        cell.textView.setText(country.getName());
 
-		cell.imageView.setImageResource(getResId(country.getCode()));
-		return cellView;
-	}
+        cell.imageView.setImageResource(getResId(country.getCode()));
+        return cellView;
+    }
 
-	/**
-	 * Holder for the cell
-	 * 
-	 */
-	static class Cell {
-		public TextView textView;
-		public ImageView imageView;
-	}
+    /**
+     * Holder for the cell
+     */
+    static class Cell {
+        public TextView textView;
+        public ImageView imageView;
+    }
 
 }
