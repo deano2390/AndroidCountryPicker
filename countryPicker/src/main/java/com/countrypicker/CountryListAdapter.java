@@ -46,7 +46,7 @@ public class CountryListAdapter extends BaseAdapter {
                 Log.e("COUNTRYPICKER", "Failure to get drawable id.", e);
             }
         }
-        return android.R.drawable.ic_menu_help;
+        return drawable.ic_blankflag;
 
     }
 
