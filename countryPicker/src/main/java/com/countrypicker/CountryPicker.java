@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,7 +42,7 @@ public class CountryPicker extends DialogFragment {
     /**
      * Hold all countries, sorted by country name
      */
-    private static List<Country> allCountriesList;
+    List<Country> allCountriesList;
 
     /**
      * Hold countries that matched user query
@@ -85,7 +86,9 @@ public class CountryPicker extends DialogFragment {
      *
      * @return
      */
-    List<Country> getAllCountries() {
+    static List<Country> getAllCountries(String removeOption) {
+
+        List<Country> allCountriesList = new ArrayList<Country>();
 
         try {
             allCountriesList = new LocaleExtractor().getAllCountries();
@@ -134,6 +137,20 @@ public class CountryPicker extends DialogFragment {
         return allCountriesList;
     }
 
+    public static HashMap getCountriesMap() {
+        List<Country> allCountriesList = getAllCountries(null);
+
+        HashMap<String, Country> map = new HashMap();
+
+
+        for (Country country : allCountriesList) {
+            map.put(country.getCode(), country);
+        }
+
+        return map;
+    }
+
+
     /**
      * To support show as dialog
      *
@@ -174,7 +191,7 @@ public class CountryPicker extends DialogFragment {
         }
 
         // Get countries from the system
-        getAllCountries();
+        getAllCountries(removeOption);
 
         // Get view components
         searchEditText = (EditText) view

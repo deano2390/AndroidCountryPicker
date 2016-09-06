@@ -27,7 +27,7 @@ public class Country {
 	public String getCode() {
 		return code;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
