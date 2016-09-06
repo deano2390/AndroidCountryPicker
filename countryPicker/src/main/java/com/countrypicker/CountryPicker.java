@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,28 +102,35 @@ public class CountryPicker extends DialogFragment {
                 }
             });
 
+            /**
+             * Try
+             */
             String userLocale = Locale.getDefault().getCountry();
 
             if (userLocale != null && userLocale.length() > 0) {
-                int indexOfUserLocale = -1;
 
-                for (int i = 0; i < allCountriesList.size(); i++) {
-                    Country country = allCountriesList.get(i);
+                Iterator<Country> it = allCountriesList.iterator();
+
+                while (it.hasNext()){
+                    Country country = it.next();
                     if (country.getCode() != null && country.getCode().equals(userLocale)) {
-                        indexOfUserLocale = i;
+                        it.remove();
+                        allCountriesList.add(0, country);
                         break;
                     }
                 }
 
-                if (indexOfUserLocale > -1)
-                    Collections.swap(allCountriesList, 0, indexOfUserLocale);
 
-                if (removeOption != null) {
-                    Country removeCountry = new Country();
-                    removeCountry.setName(removeOption);
-                    allCountriesList.add(0, removeCountry);
-                }
 
+            }
+
+            /**
+             * Add the remove option if needed
+             */
+            if (removeOption != null) {
+                Country removeCountry = new Country();
+                removeCountry.setName(removeOption);
+                allCountriesList.add(0, removeCountry);
             }
 
             // Initialize selected countries with all countries
