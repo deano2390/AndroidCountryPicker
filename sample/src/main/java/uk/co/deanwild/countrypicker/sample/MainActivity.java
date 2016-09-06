@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        final CountryPicker picker = CountryPicker.newInstance("Select Country");
+        final CountryPicker picker = CountryPicker.newInstance("select country", "remove country");
 
         picker.setListener(new CountryPickerListener() {
             @Override

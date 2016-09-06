@@ -1,35 +1,10 @@
 package com.countrypicker;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +16,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.List;
+import java.util.Locale;
+
 public class CountryPicker extends DialogFragment {
+
+    static final java.lang.String ARG_REMOVE_OPTION = "ARG_REMOVE_OPTION";
+    static final String ARG_TITLE = "ARG_TITLE";
     /**
      * View components
      */
@@ -67,6 +52,7 @@ public class CountryPicker extends DialogFragment {
      * Listener to which country user selected
      */
     private CountryPickerListener listener;
+    String removeOption;
 
     /**
      * Set listener
@@ -77,13 +63,6 @@ public class CountryPicker extends DialogFragment {
         this.listener = listener;
     }
 
-    public EditText getSearchEditText() {
-        return searchEditText;
-    }
-
-    public ListView getCountryListView() {
-        return countryListView;
-    }
 
     /**
      * Convenient function to get currency code from country code currency code
@@ -106,27 +85,10 @@ public class CountryPicker extends DialogFragment {
      *
      * @return
      */
-    private static List<Country> getAllCountries(Resources res) {
-
-        //if (allCountriesList == null) {
+    List<Country> getAllCountries() {
 
         try {
-            allCountriesList = new ArrayList<Country>();
-
-            // Read from local file
-            String allCountriesString = readFileFromRawAsString(res);
-            JSONObject jsonObject = new JSONObject(allCountriesString);
-            Iterator<?> keys = jsonObject.keys();
-
-            // Add the data to all countries list
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Country country = new Country();
-                country.setCode(key);
-                country.setName(jsonObject.getString(key));
-                allCountriesList.add(country);
-            }
-
+            allCountriesList = new LocaleExtractor().getAllCountries();
 
             // Sort the all countries list based on country name
             Collections.sort(allCountriesList, new Comparator<Country>() {
@@ -136,22 +98,29 @@ public class CountryPicker extends DialogFragment {
                 }
             });
 
+            String userLocale = Locale.getDefault().getCountry();
 
-            Country dummyCountry = new Country();
-            dummyCountry.setName("None");
-            allCountriesList.add(0, dummyCountry);
+            if (userLocale != null && userLocale.length() > 0) {
+                int indexOfUserLocale = -1;
 
-            int indexOfUK = 0;
-
-            for (int i = 0; i < allCountriesList.size(); i++) {
-                Country country = allCountriesList.get(i);
-                if (country.getCode() != null && country.getCode().equals("GB")) {
-                    indexOfUK = i;
-                    break;
+                for (int i = 0; i < allCountriesList.size(); i++) {
+                    Country country = allCountriesList.get(i);
+                    if (country.getCode() != null && country.getCode().equals(userLocale)) {
+                        indexOfUserLocale = i;
+                        break;
+                    }
                 }
-            }
 
-            Collections.swap(allCountriesList, 1, indexOfUK);
+                if (indexOfUserLocale > -1)
+                    Collections.swap(allCountriesList, 0, indexOfUserLocale);
+
+                if (removeOption != null) {
+                    Country removeCountry = new Country();
+                    removeCountry.setName(removeOption);
+                    allCountriesList.add(0, removeCountry);
+                }
+
+            }
 
             // Initialize selected countries with all countries
             selectedCountriesList = new ArrayList<Country>();
@@ -161,70 +130,22 @@ public class CountryPicker extends DialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // }
+
         return allCountriesList;
-    }
-
-    public static HashMap getCountriesMap(Resources res) {
-        getAllCountries(res);
-
-        HashMap<String, Country> map = new HashMap();
-
-
-        for (Country country : allCountriesList) {
-            map.put(country.getCode(), country);
-        }
-
-        return map;
-    }
-
-    private static String readFileFromRawAsString(Resources res) throws IOException {
-        InputStream is = res.openRawResource(R.raw.countries);
-        Writer writer = new StringWriter();
-        char[] buffer = new char[1024];
-        try {
-            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            int n;
-            while ((n = reader.read(buffer)) != -1) {
-                writer.write(buffer, 0, n);
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            is.close();
-        }
-
-        return writer.toString();
-
-    }
-
-    /**
-     * R.string.countries is a json string which is Base64 encoded to avoid
-     * special characters in XML. It's Base64 decoded here to get original json.
-     *
-     * @param context
-     * @return
-     * @throws java.io.IOException
-     */
-    private static String readFileAsString(Context context)
-            throws java.io.IOException {
-        String base64 = context.getResources().getString(R.string.countries);
-        byte[] data = Base64.decode(base64, Base64.DEFAULT);
-        return new String(data, "UTF-8");
     }
 
     /**
      * To support show as dialog
      *
      * @param dialogTitle
+     * @param removeOption
      * @return
      */
-    public static CountryPicker newInstance(String dialogTitle) {
+    public static CountryPicker newInstance(String dialogTitle, String removeOption) {
         CountryPicker picker = new CountryPicker();
         Bundle bundle = new Bundle();
-        bundle.putString("dialogTitle", dialogTitle);
+        bundle.putString(ARG_TITLE, dialogTitle);
+        bundle.putString(ARG_REMOVE_OPTION, removeOption);
         picker.setArguments(bundle);
         return picker;
     }
@@ -238,13 +159,11 @@ public class CountryPicker extends DialogFragment {
         // Inflate view
         View view = inflater.inflate(R.layout.country_picker, null);
 
-        // Get countries from the json
-        getAllCountries(getResources());
-
         // Set dialog title if show as dialog
         Bundle args = getArguments();
         if (args != null) {
-            String dialogTitle = args.getString("dialogTitle");
+            removeOption = args.getString(ARG_REMOVE_OPTION);
+            String dialogTitle = args.getString(ARG_TITLE);
             getDialog().setTitle(dialogTitle);
 
             int width = getResources().getDimensionPixelSize(
@@ -253,6 +172,9 @@ public class CountryPicker extends DialogFragment {
                     R.dimen.cp_dialog_height);
             getDialog().getWindow().setLayout(width, height);
         }
+
+        // Get countries from the system
+        getAllCountries();
 
         // Get view components
         searchEditText = (EditText) view

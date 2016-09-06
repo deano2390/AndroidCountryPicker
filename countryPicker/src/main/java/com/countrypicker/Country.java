@@ -5,17 +5,29 @@ package com.countrypicker;
  *
  */
 public class Country {
-	private String code;
 	private String name;
+	private String code;
+
+	public String getIso() {
+		return iso;
+	}
+
+	private String iso;
+
+	public Country(String name, String code, String iso) {
+		this.name = name;
+		this.code = code;
+		this.iso = iso;
+	}
+
+	public Country() {
+
+	}
 
 	public String getCode() {
 		return code;
 	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
+	
 	public String getName() {
 		return name;
 	}
