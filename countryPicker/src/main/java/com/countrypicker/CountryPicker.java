@@ -29,6 +29,7 @@ public class CountryPicker extends DialogFragment {
 
     static final java.lang.String ARG_REMOVE_OPTION = "ARG_REMOVE_OPTION";
     static final String ARG_TITLE = "ARG_TITLE";
+
     /**
      * View components
      */
@@ -43,12 +44,12 @@ public class CountryPicker extends DialogFragment {
     /**
      * Hold all countries, sorted by country name
      */
-    List<Country> allCountriesList;
+    static List<Country> allCountriesList;
 
     /**
      * Hold countries that matched user query
      */
-    private static List<Country> selectedCountriesList;
+    static List<Country> selectedCountriesList;
 
     /**
      * Listener to which country user selected
@@ -89,7 +90,7 @@ public class CountryPicker extends DialogFragment {
      */
     static List<Country> getAllCountries(String removeOption) {
 
-        List<Country> allCountriesList = new ArrayList<Country>();
+        allCountriesList = new ArrayList<Country>();
 
         try {
             allCountriesList = new LocaleExtractor().getAllCountries();
