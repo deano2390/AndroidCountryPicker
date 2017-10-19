@@ -29,23 +29,29 @@ public class LocaleExtractor {
 
     public List<Country> getAllCountries() {
 
-
         Locale[] locales = Locale.getAvailableLocales();
         CountryList countries = new CountryList();
 
 
         for (Locale locale : locales) {
+
             try {
-                String iso = " ";// locale.getISO3Country();
+
+                String iso = locale.getISO3Country();
                 String code = locale.getCountry();
                 String name = locale.getDisplayCountry();
 
                 if (!"".equals(iso) && !"".equals(code) && !"".equals(name)) {
 
-                    Country country = new Country(name, code, iso);
+                    /**
+                     * Ensure length is 2 and contains no numbers
+                     */
+                    if (code.length() == 2 && !code.matches(".*\\d+.*")) {
+                        Country country = new Country(name, code, iso);
 
-                    if (!countries.containsCountry(country)) {
-                        countries.add(country);
+                        if (!countries.containsCountry(country)) {
+                            countries.add(country);
+                        }
                     }
                 }
 
